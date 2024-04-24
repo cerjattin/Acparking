@@ -43,7 +43,7 @@ class MiControlador extends GetxController {
   late final TextEditingController _emailController = TextEditingController();
   late final TextEditingController _passwordController =
       TextEditingController();
-  late bool _acceptTerms = false;
+  late bool _acceptTerms = true;
 }
 
 class _SessionState extends State<Session> {

@@ -38,17 +38,12 @@ class PlacasProvider {
     final url = '$_endpoint/Placas/idplaca.json';
     final resp = await http.get(Uri.parse(url));
     if (resp.statusCode == 200) {
-      final Map<String, dynamic> jsonData = json.decode(resp.body);
-      List<PlacasModel> autoriza = [];
-      //final placa = Placa.fromJsonList(jsonData);
-      //return placa.items;
-      jsonData.forEach((key, value) {
-        if (key != "iduser") {
-          // Ignorar el placeholder de iduser
-          autoriza.add(PlacasModel.fromJson(value)..placut = key);
-        }
-      });
-      return autoriza;
+      String body = utf8.decode(resp.bodyBytes);
+      final jsonData = jsonDecode(body);
+      print(jsonData);
+      final product = Placa.fromJsonList(jsonData);
+
+      return product.items;
     } else {
       throw Exception("Ocurrio Algo ${resp.statusCode}");
     }

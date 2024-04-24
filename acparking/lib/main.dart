@@ -17,6 +17,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
         debugShowCheckedModeBanner: false,
+        theme: ThemeData(primarySwatch: Colors.blueGrey),
         // nuestra pagina inicial sera el splash de cargando
         initialRoute: "/splash",
 

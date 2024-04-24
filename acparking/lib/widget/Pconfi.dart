@@ -8,7 +8,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'CustomerDrawer.dart';
-import '/models/Autoriza.dart';
 
 class Pconfi extends StatefulWidget {
   const Pconfi({
@@ -23,17 +22,17 @@ class Pconfi extends StatefulWidget {
 }
 
 class AuthService {
-  final PlacasProvider _placasProvider = PlacasProvider();
-  late List<PlacasModel> users = [];
+  final PlacasProvider _placaProvider = PlacasProvider();
 
-  Future<String?> validplaca(String placaaut) async {
+  Future<String?> placautoriza(String placaut) async {
     try {
-      users = await _placasProvider.getplacas();
-      print(_placasProvider.getplacas());
-      for (var user in users) {
-        if (user.placut == placaaut) {
+      print('antes del final placauto');
+      final List<PlacasModel> placas = await _placaProvider.getplacas();
+      print('despues del final placauto');
+      for (var plac in placas) {
+        if (plac.placut == placaut) {
           // Aquí podrías determinar el tipo de usuario
-          return ""; // Simula que todos son residentes, ajusta según tus necesidades
+          return "residente"; // Simula que todos son residentes, ajusta según tus necesidades
         }
       }
     } catch (e) {
@@ -47,7 +46,17 @@ class AuthService {
 
 class _PconfiState extends State<Pconfi> {
   final TextEditingController _placaController = TextEditingController();
-  List<Autoriza> autorizaList = [];
+  final autoriza = PlacasModel();
+  late Future<List<PlacasModel>> _autoriza;
+
+  final autorizaprovider = PlacasProvider();
+  final formKey = GlobalKey<FormState>();
+  @override
+  void initState() {
+    super.initState();
+    final getProvider = PlacasProvider();
+    _autoriza = getProvider.getplacas();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -153,26 +162,6 @@ class _PconfiState extends State<Pconfi> {
                     ),
                     margin: const EdgeInsets.all(20.0),
                     padding: const EdgeInsets.all(20.0),
-                    child: Column(
-                      children: [
-                        SizedBox(
-                          height: 200,
-                          width: 350,
-                          child: ListView.builder(
-                              itemCount: autorizaList.length,
-                              itemBuilder: (context, index) {
-                                return Card(
-                                    color: Colors.green,
-                                    child: ListTile(
-                                      title: Text(
-                                          'ID: ${autorizaList[index].documento}'),
-                                      subtitle: Text(
-                                          'Nombre: ${autorizaList[index].name_autorizado}'),
-                                    ));
-                              }),
-                        ),
-                      ],
-                    ),
                   ),
                   ElevatedButton(
                     child: const Text('Confirmar ingreso'),
@@ -188,7 +177,7 @@ class _PconfiState extends State<Pconfi> {
                         color: Colors.green, size: 30.0),
                     onPressed: () {
                       // Agrega aquí la lógica para manejar el botón de la cámara
-                      _valiplaca(context);
+                      _validplaca(context);
                     },
                   )),
               Positioned(
@@ -242,12 +231,38 @@ class _PconfiState extends State<Pconfi> {
     );
   }
 
-  void _valiplaca(BuildContext context) async {
-    String placa = _placaController.text;
+  Widget cargarLista(context, PlacasModel prod) {
+    return Dismissible(
+      key: UniqueKey(),
+      background: Container(
+        color: Colors.blueGrey,
+      ),
+      /*onDismissed: (direccion) {
+        PlacasProvider.borrarplacas(prod.placpr as String);
+      },*/
+      child: ListTile(
+        title: Text(prod.nameAutorizado.toString()),
+        subtitle: Text("\$ ${prod.document.toString()}"),
+        trailing: Icon(
+          Icons.star,
+          color: prod.placut != null ? Colors.blue : Colors.grey,
+        ),
+      ),
+    );
+  }
 
-    String? userType = await AuthService().validplaca(placa);
+  void _validplaca(BuildContext context) async {
+    String placaut = _placaController.text;
+    print(_placaController.text);
 
+    String? userType = await AuthService().placautoriza(placaut);
+    print('despues de placautoriza');
     if (userType != null) {
+      // Aquí decides a qué página navegar basado en el tipo de usuario
+      if (userType == 'residente') {
+        // ignore: use_build_context_synchronously
+        print('encontro registro');
+      }
     } else {
       // Mostrar algún mensaje de error
       showDialog(
@@ -255,8 +270,8 @@ class _PconfiState extends State<Pconfi> {
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: const Text('Placa no Existente'),
-            content: const Text('Datos incorrectos.'),
+            title: const Text('Vehiculo NO autorizado'),
+            content: const Text('Comunicarse con Propietario.'),
             actions: <Widget>[
               TextButton(
                 onPressed: () {

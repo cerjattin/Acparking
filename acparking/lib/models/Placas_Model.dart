@@ -2,6 +2,8 @@
 
 import 'dart:convert';
 
+import 'package:flutter/widgets.dart';
+
 PlacasModel placasModelFromJson(String str) =>
     PlacasModel.fromJson(json.decode(str));
 
@@ -16,10 +18,11 @@ class Placa {
     if (jsonList == null) {
       return;
     } else {
+      print(jsonList);
       jsonList.forEach((id, prod) {
+        print(prod[1]);
         final placa = PlacasModel.fromJson(prod);
-        placa.id = id;
-
+        placa.placut = id;
         items.add(placa);
       });
     }
