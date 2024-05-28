@@ -22,7 +22,6 @@ class User {
       jsonList.forEach((id, prod) {
         final user = Usuario.fromJson(prod);
         user.id = id;
-
         items.add(user);
       });
     }

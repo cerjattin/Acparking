@@ -20,7 +20,7 @@ class Placa {
     } else {
       print(jsonList);
       jsonList.forEach((id, prod) {
-        print(prod[1]);
+
         final placa = PlacasModel.fromJson(prod);
         placa.placut = id;
         items.add(placa);
