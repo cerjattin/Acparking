@@ -1,12 +1,10 @@
 // ignore_for_file: file_names
 
-import 'package:acparking/models/User_Model.dart';
-import 'package:acparking/provider/User_Provider.dart';
 import 'package:acparking/screens/welcome.dart';
 import 'package:acparking/utils/responsive.dart';
 import 'package:email_validator/email_validator.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import '../services/auth_service.dart';
 import 'HomeUser.dart';
 import 'package:get/get.dart';
 
@@ -18,27 +16,6 @@ class Session extends StatefulWidget {
   State<Session> createState() => _SessionState();
 }
 
-class AuthService {
-  final UserProvider _userProvider = UserProvider();
-
-  Future<String?> iniciarSesion(String email, String password) async {
-    try {
-      final List<UserModel> users = await _userProvider.getuser();
-      for (var user in users) {
-        if (user.mail == email && user.pass == password) {
-          // Aquí podrías determinar el tipo de usuario
-          return "residente"; // Simula que todos son residentes, ajusta según tus necesidades
-        }
-      }
-    } catch (e) {
-      if (kDebugMode) {
-        print(e);
-      }
-    }
-    return null;
-  }
-}
-
 class MiControlador extends GetxController {
   late final TextEditingController _emailController = TextEditingController();
   late final TextEditingController _passwordController =
@@ -47,6 +24,7 @@ class MiControlador extends GetxController {
 }
 
 class _SessionState extends State<Session> {
+  final AuthService _authService = AuthService();
   @override
   Widget build(BuildContext context) {
     final Responsive responsive = Responsive.of(context);
@@ -95,11 +73,35 @@ class _SessionState extends State<Session> {
                   ),
                 SizedBox(height: responsive.height * 0.04),
                 ElevatedButton.icon(
-                    onPressed: () {
-                      if (controlador._acceptTerms == true) {
-                        _login(context);
+                    onPressed: () async {
+                      {
+                        String emailuser =
+                            controlador._emailController.text.trim();
+                        String password =
+                            controlador._passwordController.text.trim();
+                        if (emailuser.isNotEmpty && password.isNotEmpty) {
+                          try {
+                            await _authService.login(emailuser, password);
+                            Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const HomeUser()),
+                              (route) => false,
+                            );
+                          } catch (e) {
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(const SnackBar(
+                              content: Text('Invalid e-Mail or password.'),
+                            ));
+                          }
+                        } else {
+                          ScaffoldMessenger.of(context)
+                              .showSnackBar(const SnackBar(
+                            content:
+                                Text('Please enter a username and password.'),
+                          ));
+                        }
                       }
-                      validateEmail();
                     },
                     icon: const Icon(Icons.login),
                     label: const Text('Ingresar'))
@@ -116,43 +118,6 @@ class _SessionState extends State<Session> {
     if (!isValid) {
       ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Formato de Correo no Valido')));
-    }
-  }
-
-  void _login(BuildContext context) async {
-    final controlador = Get.put(MiControlador());
-    String email = controlador._emailController.text;
-    String password = controlador._passwordController.text;
-
-    String? userType = await AuthService().iniciarSesion(email, password);
-
-    if (userType != null) {
-      // Aquí decides a qué página navegar basado en el tipo de usuario
-      if (userType == 'residente') {
-        // ignore: use_build_context_synchronously
-        Navigator.of(context)
-            .push(MaterialPageRoute(builder: (context) => const HomeUser()));
-      }
-    } else {
-      // Mostrar algún mensaje de error
-      showDialog(
-        // ignore: use_build_context_synchronously
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: const Text('Error de Inicio de Sesión'),
-            content: const Text('Correo electrónico o contraseña incorrectos.'),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: const Text('OK'),
-              ),
-            ],
-          );
-        },
-      );
     }
   }
 }

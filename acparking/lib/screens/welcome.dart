@@ -35,25 +35,18 @@ class welcome extends StatelessWidget {
                     ],
                   )),
               Positioned(
-                  top: 20,
-                  right: 0,
+                  top: Constraints.minHeight * 0.24,
                   left: 0,
                   child: SvgPicture.asset(
                     "assets/home.svg",
-                    width: Constraints.maxWidth * 0.2,
+                    width: Constraints.maxWidth * 0.375,
                   )),
               Positioned(
-                  top: Constraints.minHeight * 0.3,
-                  child: SvgPicture.asset(
-                    "assets/cars.svg",
-                    width: Constraints.maxWidth * 0.4,
-                  )),
-              Positioned(
-                  top: Constraints.minHeight * 0.24,
+                  top: Constraints.minHeight * 0.46,
                   right: 0,
                   child: SvgPicture.asset(
                     "assets/scudo.svg",
-                    width: Constraints.maxWidth * 0.3,
+                    width: Constraints.maxWidth * 0.25,
                   ))
             ],
           );

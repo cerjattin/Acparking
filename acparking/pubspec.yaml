@@ -21,6 +21,14 @@ dependencies:
   flutter_svg:
   http: ^1.2.1
   email_validator:
+  riverpod: ^2.5.1
+  get_storage:
+  flutter_secure_storage:
+  crypto:
+  provider:
+  firebase_core:
+  firebase_database:
+  firebase_auth:
 
 dev_dependencies:
   flutter_test:

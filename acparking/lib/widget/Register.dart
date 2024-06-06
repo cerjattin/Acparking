@@ -29,13 +29,12 @@ class Register extends StatefulWidget {
 
 class MiiControlador extends GetxController {
   final PropProvider propProvider = PropProvider();
-  final TextEditingController _placa = TextEditingController();
   final TextEditingController _id = TextEditingController();
   final TextEditingController _name = TextEditingController();
-  final TextEditingController _cel = TextEditingController();
+  final TextEditingController _lastname = TextEditingController();
   final TextEditingController _mail = TextEditingController();
-  final TextEditingController _torre = TextEditingController();
-  final TextEditingController _apto = TextEditingController();
+  final TextEditingController _address = TextEditingController();
+  final TextEditingController _phone = TextEditingController();
 }
 
 class _RegisterState extends State<Register> with WidgetsBindingObserver {
@@ -90,34 +89,20 @@ class _RegisterState extends State<Register> with WidgetsBindingObserver {
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: <Widget>[
                         Row(children: <Widget>[
-                          SizedBox(
-                            width: 230,
-                            child: TextField(
-                              controller: controlador._placa,
-                              decoration: InputDecoration(
-                                  labelText: 'Placa',
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(10.0),
-                                  ),
-                                  enabled: true,
-                                  filled: true,
-                                  fillColor: Colors.white),
-                            ),
-                          ),
+                          TextFormField(
+                            decoration: const InputDecoration(
+                                hintText: "Documento",
+                                prefixIcon: Icon(Icons.person)),
+                            controller: controlador._id,
+                          )
                         ]),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        TextField(
-                          controller: controlador._id,
-                          decoration: InputDecoration(
-                              labelText: 'Documento de identidad',
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10.0),
-                              ),
-                              enabled: true,
-                              filled: true,
-                              fillColor: Colors.white),
+                        SizedBox(height: responsive.height * 0.02),
+                        TextFormField(
+                          obscureText: true,
+                          decoration: const InputDecoration(
+                              hintText: "Contraseña",
+                              prefixIcon: Icon(Icons.contactless)),
+                          controller: controlador._name,
                         ),
                         const SizedBox(
                           height: 10,
@@ -137,7 +122,7 @@ class _RegisterState extends State<Register> with WidgetsBindingObserver {
                           height: 10,
                         ),
                         TextField(
-                          controller: controlador._cel,
+                          controller: controlador._phone,
                           decoration: InputDecoration(
                               labelText: 'Celular',
                               border: OutlineInputBorder(
@@ -179,7 +164,7 @@ class _RegisterState extends State<Register> with WidgetsBindingObserver {
                               // This is called when the user selects an item.
                               setState(() {
                                 dropdownValue = value!;
-                                controlador._torre.text = dropdownValue;
+                                controlador._address.text = dropdownValue;
                               });
                             },
                             items: list
@@ -195,7 +180,7 @@ class _RegisterState extends State<Register> with WidgetsBindingObserver {
                           height: 10,
                         ),
                         TextField(
-                          controller: controlador._apto,
+                          controller: controlador._lastname,
                           decoration: InputDecoration(
                               labelText: 'Apartamento',
                               border: OutlineInputBorder(
@@ -209,50 +194,7 @@ class _RegisterState extends State<Register> with WidgetsBindingObserver {
                 ),
                 ElevatedButton(
                   child: const Text('Registrar'),
-                  onPressed: () {
-                    String placa = controlador._placa.text;
-                    String idPropietario = controlador._id.text;
-                    String nombreResponsable = controlador._name.text;
-                    String email = controlador._mail.text;
-                    String apto = controlador._apto.text;
-                    String cel = controlador._cel.text;
-                    String torre = controlador._torre.text;
-
-                    // enviar a firebase
-                    PropModel propModel = PropModel(
-                      placa: placa,
-                      apto: apto,
-                      id: idPropietario,
-                      mail: email,
-                      name: nombreResponsable,
-                      telefono: cel,
-                      torre: torre,
-                      saldop: '',
-                      fechapago: '',
-                    );
-
-                    // Limpiar todos los TextField
-                    controlador._placa.clear();
-                    controlador._id.clear();
-                    controlador._name.clear();
-                    controlador._cel.clear();
-                    controlador._mail.clear();
-                    controlador._apto.clear();
-
-                    controlador.propProvider
-                        .crearprop(propModel)
-                        .then((success) {
-                      if (success) {
-                        return 'FUNCIONO';
-                        // Operación exitosa
-                        // Mostrar un mensaje o realizar alguna acción adicional
-                      } else {
-                        return 'FALLO';
-                        // Operación fallida
-                        // Mostrar un mensaje de error o realizar alguna acción adicional
-                      }
-                    });
-                  },
+                  onPressed: () {},
                 )
               ]),
               Positioned(
